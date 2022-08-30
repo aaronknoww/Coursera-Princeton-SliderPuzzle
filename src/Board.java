@@ -20,6 +20,9 @@ public class Board
         StringBuilder tablero = new StringBuilder();
        
         int n = tiles.length;
+        tablero.append(tiles.length);
+        tablero.append('\n');
+
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
@@ -40,8 +43,28 @@ public class Board
         return tiles.length;
      }
 
-    // // number of tiles out of place
-    // public int hamming()
+    // number of tiles out of place
+    public int hamming()
+    {
+        int count = 0;
+        int depu, dep2 = 0;
+        // To check every tile.
+        for (int row = 0; row < tiles.length; row++)
+        {
+            for (int col = 0; col < tiles.length; col++)
+            {
+
+                depu=(row*tiles.length)+col+1;
+                dep2 = tiles[row][col];
+                
+               if(!(tiles[row][col] == ((row*tiles.length)+col+1)))
+                    count++;
+            }           
+            
+        }
+        
+        return (tiles[tiles.length-1][tiles.length-1] == 0) ? --count : count;
+    }
 
     // // sum of Manhattan distances between tiles and goal
     // public int manhattan()
