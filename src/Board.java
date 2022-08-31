@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.PrimMST;
 
+
 public class Board
 {
     private int [][] tiles;
@@ -47,27 +48,53 @@ public class Board
     public int hamming()
     {
         int count = 0;
-        int depu, dep2 = 0;
+       
         // To check every tile.
         for (int row = 0; row < tiles.length; row++)
         {
             for (int col = 0; col < tiles.length; col++)
             {
-
-                depu=(row*tiles.length)+col+1;
-                dep2 = tiles[row][col];
-                
+                if(tiles[row][col] == 0)
+                    continue;
+             
                if(!(tiles[row][col] == ((row*tiles.length)+col+1)))
                     count++;
             }           
             
         }
         
-        return (tiles[tiles.length-1][tiles.length-1] == 0) ? --count : count;
+        return count;
     }
 
-    // // sum of Manhattan distances between tiles and goal
-    // public int manhattan()
+    // sum of Manhattan distances between tiles and goal
+    public int manhattan()
+    {
+        
+        int fila = 0; 
+        int columna = 0;
+        int man = 0;
+        
+        // To check every tile.
+        for (int row = 0; row < tiles.length; row++)
+        {
+            for (int col = 0; col < tiles.length; col++)
+            {
+                if(tiles[row][col] == 0)
+                    continue;
+                if(tiles[row][col] != ((row*tiles.length)+col+1))
+                {                    
+                    fila = tiles[row][col]/tiles.length; //----------> To find the row it belongs to the current number
+                    columna = tiles[row][col]-(fila*tiles.length+1);//-> To find the column it belongs to the current number
+                    man += Math.abs(fila-row)+ Math.abs(columna-col);
+                }
+             
+               
+            }           
+            
+        }
+
+        return man;
+    }
 
     // // is this board the goal board?
     // public boolean isGoal()
