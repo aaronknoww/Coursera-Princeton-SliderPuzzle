@@ -1,9 +1,15 @@
-import edu.princeton.cs.algs4.PrimMST;
+import java.util.Arrays;
+import java.util.Stack;
+import edu.princeton.cs.algs4.StdRandom;
 
 
 public class Board
 {
     private int [][] tiles;
+    private Stack<Board> sNeighbors;
+    private int col0;//---------------->To save the position of the number zero or empty space. 
+    private int fil0;//---------------->To save the position of the number zero or empty space.
+    private Board gemelo;//------------>To store a twin 
     
      // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)  You may also assume that 2 ≤ n < 128
@@ -11,7 +17,16 @@ public class Board
     {
         if((tiles.length < 2) || (tiles.length>128))
             throw new IndexOutOfBoundsException("number of n is out of limits"); // TODO: REVISAR QUE EXEPCION MANDAR.
-        this.tiles = tiles;      
+        
+        this.tiles = new int[tiles.length][tiles.length];
+        for (int i = 0; i < tiles.length; i++)
+        {
+            for (int j = 0; j < tiles.length; j++)
+                this.tiles[i][j] = tiles[i][j];                         
+        }
+        sNeighbors = new Stack<Board>();    
+        col0 = 0;
+        fil0 = 0;      
       
     }
                                            
@@ -96,17 +111,123 @@ public class Board
         return man;
     }
 
-    // // is this board the goal board?
-    // public boolean isGoal()
+    // is this board the goal board?
+    public boolean isGoal()
+    {
+        for (int row = 0; row < tiles.length; row++)
+        {
+            for (int col = 0; col < tiles.length; col++)
+            {
+                if(tiles[row][col] == 0)
+                    continue;
+             
+               if(tiles[row][col] != ((row*tiles.length)+col+1))
+                    return false;
+            }           
+            
+        }
+        return true;
+    }
 
     // // does this board equal y?
-    // public boolean equals(Object y)
+    public boolean equals(Object y)
+    {
+        Board other = (Board)y;
+        return Arrays.deepEquals(this.tiles, other.tiles);
+    }
 
-    // // all neighboring boards
-    // public Iterable<Board> neighbors()
+    // all neighboring boards
+    public Iterable<Board> neighbors()
+    {
+        boolean zero = false;
+        
+        for (int i = 0; i < tiles.length; i++)
+        {
+            for (int j = 0; j < tiles.length; j++)
+            {
+                if(tiles[i][j] == 0) 
+                {
+                    fil0 = i;
+                    col0 = j;
+                    zero = true;
+                    break;
+                }
+                
+            }
+            if(zero)
+                break;
+        }
 
-    // // a board that is obtained by exchanging any pair of tiles
-    // public Board twin()
+        if (col0-1 >= 0)
+            createNeighbor(fil0, col0-1);   
+        if (col0+1 < tiles.length)
+            createNeighbor(fil0, col0+1);
+        if (fil0-1 >= 0)
+            createNeighbor(fil0-1, col0);
+        if (fil0+1 < tiles.length)
+            createNeighbor(fil0+1, col0);   
+
+        return sNeighbors;
+    }
+
+    // a board that is obtained by exchanging any pair of tiles
+    public Board twin()
+    {
+        if(gemelo!=null)
+            return gemelo;
+
+        int x;
+        int y;
+        int x2;
+        int y2;
+
+        boolean condition = true;
+        do
+        {
+            x  = StdRandom.uniform(0, tiles.length);
+            y  = StdRandom.uniform(0, tiles.length);
+            x2 = StdRandom.uniform(0, tiles.length);
+            y2 = StdRandom.uniform(0, tiles.length);
+            if(tiles[x][y] == 0 || tiles[x2][y2] == 0)
+                condition = true;
+            else if(tiles[x][y] == tiles[x2][y2])
+                condition = true;
+            else
+                condition = false;
+        }
+        while (condition);
+
+        int aux = 0;
+
+        // Creating twin
+        aux = tiles[x][y];
+        tiles[x][y] = tiles[x2][y2];
+        tiles[x2][y2] = aux;
+        gemelo = new Board(tiles);
+
+        // Returning tile to its intial state.
+
+        tiles[x2][y2] = tiles[x][y];
+        tiles[x][y] = aux;
+        
+        return gemelo;        
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////
+    //                      PRIVATE FUNCIONS                             //
+    ////////////////////////////////////////////////////////////////////// 
+
+    private void createNeighbor(int fila, int col)
+    {   
+        
+
+        tiles[fil0][col0] = tiles[fila][col];
+        tiles[fila][col] = 0;
+        sNeighbors.add(new Board(tiles));
+        tiles[fila][col] = tiles[fil0][col0];
+
+    }
 
     // // unit testing (not graded)
     // public static void main(String[] args)
