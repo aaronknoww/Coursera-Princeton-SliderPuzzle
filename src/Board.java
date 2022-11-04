@@ -1,5 +1,7 @@
 import java.util.Arrays;
 import java.util.Stack;
+
+import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
 
@@ -98,7 +100,7 @@ public class Board
                     continue;
                 if(tiles[row][col] != ((row*tiles.length)+col+1))
                 {                    
-                    fila = tiles[row][col]/tiles.length; //----------> To find the row it belongs to the current number
+                    fila = (tiles[row][col]-1)/tiles.length; //----------> To find the row it belongs to the current number
                     columna = tiles[row][col]-(fila*tiles.length+1);//-> To find the column it belongs to the current number
                     man += Math.abs(fila-row)+ Math.abs(columna-col);
                 }
@@ -139,6 +141,9 @@ public class Board
     // all neighboring boards
     public Iterable<Board> neighbors()
     {
+        if(!sNeighbors.isEmpty())
+            return sNeighbors;
+            
         boolean zero = false;
         
         for (int i = 0; i < tiles.length; i++)
@@ -226,10 +231,32 @@ public class Board
         tiles[fila][col] = 0;
         sNeighbors.add(new Board(tiles));
         tiles[fila][col] = tiles[fil0][col0];
+        tiles[fil0][col0] = 0;
 
     }
 
     // // unit testing (not graded)
-    // public static void main(String[] args)
+    public static void main(String[] args)
+    {
+        int[][] tiles = {{1,2,3},
+                         {4,0,5},
+                         {7,8,6}};
+
+        Board tablero = new Board(tiles);
+
+        for (Board board : tablero.neighbors())
+        {
+            board.manhattan();
+            StdOut.print(board.toString()); 
+            
+        }
+
+        StdOut.println(tablero.manhattan());
+        StdOut.println(tablero.hamming());
+        StdOut.println(tablero.twin().toString());
+        StdOut.println(tablero.dimension());
+        StdOut.println(tablero.isGoal());
+    
+    }
     
 }
